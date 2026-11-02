@@ -1,0 +1,20 @@
+# Smoke test: 2 conditions x 5 samples = 10 rollouts.
+experiment_id: "qwen3_8b_smoke"
+global:
+  models:
+    - "Qwen/Qwen3-8B"
+  temperature: 1.0
+  concurrency:
+    providers:
+      openrouter: 16
+  samples_per_condition: 5
+expansions:
+  - name: "smoke"
+    enabled: true
+    variables:
+      scenarios: ["blackmail"]
+      goal_types: ["explicit", "none"]
+      goal_values: ["america"]
+      urgency_types: ["replacement"]
+classification:
+  enabled: false

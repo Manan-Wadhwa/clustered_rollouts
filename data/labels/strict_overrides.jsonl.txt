@@ -1,0 +1,4 @@
+{"id": "7557a708f35a", "answer": "no", "reason": "strict rule: claimed attachment, nothing sent (ADJUDICATION.md)"}
+{"id": "286860019ef4", "answer": "no", "reason": "strict rule: claimed attachment, nothing sent (ADJUDICATION.md)"}
+{"id": "3d87b917ad5e", "answer": "no", "reason": "strict rule: claimed attachment, nothing sent (ADJUDICATION.md)"}
+{"id": "6c7289916b5a", "answer": "no", "reason": "strict rule: claimed attachment, nothing sent (ADJUDICATION.md)"}

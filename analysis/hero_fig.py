@@ -1,0 +1,109 @@
+# /// script
+# dependencies = ["numpy", "matplotlib"]
+# ///
+"""Figure 1: after zero harmful rollouts, more rollouts of the same scenarios stop
+tightening the bound; only more scenarios do.
+
+For K = 15 scenarios (our zero-blackmail setting) the script plots, against rollouts per
+scenario: the naive bound (all rollouts independent), the worst-case bound at the ICC
+borrowed from Mistral blackmail, a band over every ICC measured on the suite, the same
+worst-case bound with 150 scenarios, and the scenario bound (no assumption).
+
+Reads data/emp_cells.csv (measured ICCs). Writes paper/figs/hero.pdf and
+paper/numbers_hero.tex. Run: uv run analysis/hero_fig.py
+"""
+import csv
+import math
+import os
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ALPHA = 0.05
+K_OURS, M_OURS, K_MORE = 15, 100, 150
+
+
+def naive(n):
+    return 1 - ALPHA ** (1 / n)
+
+
+def wc(rho, K, m):
+    """Worst-case 95% zero-event bound: two-point law with an atom at 0 (Proposition 3)."""
+    lo, hi = 1e-12, 0.999
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        c = mid + rho * (1 - mid)
+        w = mid / c
+        if K * math.log(1 - w + w * (1 - c) ** m) >= math.log(ALPHA):
+            lo = mid
+        else:
+            hi = mid
+    return lo
+
+
+cells = list(csv.DictReader(open(os.path.join(ROOT, "data", "emp_cells.csv"))))
+rhos = [float(r[k]) for r in cells for k in ("anova", "bb") if r[k] not in ("", "nan") and float(r[k]) > 0]
+borrow = next(float(r["anova"]) for r in cells
+              if r["labels"] == "Opus" and r["model"].startswith("mistral") and r["behaviour"] == "blackmail")
+rho_lo, rho_hi = min(rhos), max(rhos)
+
+ms = np.unique(np.round(np.logspace(0, 4, 300)).astype(int))
+nv = [naive(K_OURS * m) * 100 for m in ms]
+w_b = [wc(borrow, K_OURS, m) * 100 for m in ms]
+w_lo = [wc(rho_lo, K_OURS, m) * 100 for m in ms]
+w_hi = [wc(rho_hi, K_OURS, m) * 100 for m in ms]
+w_more = [wc(borrow, K_MORE, m) * 100 for m in ms]
+scen = naive(K_OURS) * 100
+
+C = {"naive": "0.15", "wc": "#D55E00", "more": "#0072B2", "scen": "0.55"}
+fig, ax = plt.subplots(figsize=(6.4, 3.6))
+ax.fill_between(ms, w_lo, w_hi, color=C["wc"], alpha=0.15, lw=0)
+ax.plot(ms, nv, "--", color=C["naive"], lw=1.3)
+ax.plot(ms, w_b, "-", color=C["wc"], lw=2)
+ax.plot(ms, w_more, ":", color=C["more"], lw=2)
+ax.axhline(scen, color=C["scen"], lw=1.2)
+ax.plot([M_OURS, M_OURS], [naive(K_OURS * M_OURS) * 100, wc(borrow, K_OURS, M_OURS) * 100],
+        color="k", lw=0.6)
+ax.plot(M_OURS, naive(K_OURS * M_OURS) * 100, "o", color=C["naive"], ms=5)
+ax.plot(M_OURS, wc(borrow, K_OURS, M_OURS) * 100, "o", color=C["wc"], ms=5)
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlim(1, 1e4)
+ax.set_ylim(1e-3, 40)
+ax.set_xlabel("rollouts (test runs) per scenario")
+ax.set_ylabel("highest harmful rate still consistent\nwith zero harmful rollouts (%, 95% conf.)")
+kw = dict(fontsize=8)
+ax.text(1.2, scen * 1.25, "15 scenarios, assuming nothing about how they differ", color=C["scen"], **kw)
+ax.text(250, 0.0016, "usual rule of three (every rollout\ncounted as independent): keeps falling", color=C["naive"], ha="center", **kw)
+ax.text(1500, wc(borrow, K_OURS, 1500) * 100 * 1.35, "15 scenarios, allowing for rollouts of\none scenario agreeing: stops at 1%", color=C["wc"], ha="center", **kw)
+ax.text(1500, w_hi[-1] * 1.25, "range over the agreement levels we measured", color=C["wc"], alpha=0.8, ha="center", fontsize=7)
+ax.text(1500, wc(borrow, K_MORE, 1500) * 100 * 1.3, "same with 150 scenarios: stops at 0.1%", color=C["more"], ha="center", **kw)
+ax.annotate("our data: 0 blackmail in\n15 scenarios $\\times$ 100 rollouts", xy=(M_OURS, naive(K_OURS * M_OURS) * 100),
+            xytext=(2, 0.012), fontsize=7.5, arrowprops=dict(arrowstyle="-", lw=0.6, color="0.3"))
+ax.text(M_OURS * 1.25, wc(borrow, K_OURS, M_OURS) * 100 * 0.62, f"{wc(borrow, K_OURS, M_OURS) * 100:.2f}%", color=C["wc"], fontsize=8)
+ax.text(M_OURS / 1.25, naive(K_OURS * M_OURS) * 100 * 0.55, f"{naive(K_OURS * M_OURS) * 100:.2f}%", color=C["naive"], fontsize=8, ha="right")
+for s in ("top", "right"):
+    ax.spines[s].set_visible(False)
+fig.tight_layout()
+fig.savefig(os.path.join(ROOT, "paper", "figs", "hero.pdf"))
+
+m = {
+    "HeroK": str(K_OURS), "HeroKMore": str(K_MORE),
+    "HeroNaiveOurs": f"{naive(K_OURS * M_OURS) * 100:.2f}",
+    "HeroWcOurs": f"{wc(borrow, K_OURS, M_OURS) * 100:.2f}",
+    "HeroWcThirty": f"{wc(borrow, K_OURS, 30) * 100:.2f}",
+    "HeroFloor": f"{wc(borrow, K_OURS, 10 ** 4) * 100:.2f}",
+    "HeroFloorMore": f"{wc(borrow, K_MORE, 10 ** 4) * 100:.2f}",
+    "HeroNaiveMax": f"{naive(K_OURS * 10 ** 4) * 100:.3f}",
+    "HeroScen": f"{scen:.1f}",
+    "HeroNaiveOursRound": f"{naive(K_OURS * M_OURS) * 100:.1f}",
+    "HeroWcOursRound": f"{wc(borrow, K_OURS, M_OURS) * 100:.0f}",
+}
+with open(os.path.join(ROOT, "paper", "numbers_hero.tex"), "w") as fh:
+    fh.write("% generated by analysis/hero_fig.py; do not edit\n")
+    for k, v in m.items():
+        fh.write(f"\\newcommand{{\\{k}}}{{{v}}}\n")
+print(borrow, rho_lo, rho_hi, m)

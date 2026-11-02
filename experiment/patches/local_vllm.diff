@@ -1,0 +1,40 @@
+diff --git i/api_client/model_client.py w/api_client/model_client.py
+index 3f04474..16c7928 100644
+--- i/api_client/model_client.py
++++ w/api_client/model_client.py
+@@ -262,7 +262,8 @@ class ModelClient:
+         if OPENAI_AVAILABLE and os.getenv("OPENROUTER_API_KEY"):
+             self.openrouter_client = AsyncOpenAI(
+                 api_key=os.getenv("OPENROUTER_API_KEY"),
+-                base_url="https://openrouter.ai/api/v1"
++                # Local vLLM (or any OpenAI-compatible server): set OPENROUTER_BASE_URL.
++                base_url=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+             )
+     
+     def _detect_provider(self, model_id: str) -> str:
+@@ -591,6 +592,12 @@ class ModelClient:
+             for msg in messages
+         ]
+         
++        # Extra JSON fields for the request body, e.g. Qwen3 thinking control on vLLM:
++        # OPENROUTER_EXTRA_BODY='{"chat_template_kwargs": {"enable_thinking": false}}'
++        extra_body = os.getenv("OPENROUTER_EXTRA_BODY")
++        if extra_body and "extra_body" not in kwargs:
++            kwargs["extra_body"] = json.loads(extra_body)
++
+         api_start = time.time()
+         response = await self.openrouter_client.chat.completions.create(
+             model=model_id,
+diff --git i/scripts/run_experiments.py w/scripts/run_experiments.py
+index a1016e8..c12bf0f 100755
+--- i/scripts/run_experiments.py
++++ w/scripts/run_experiments.py
+@@ -24,7 +24,7 @@ API_TIMEOUT_SECONDS = 600  # Timeout for individual API calls
+ MAX_CONCURRENT_TASKS = 200  # Maximum concurrent tasks
+ PROGRESS_REPORT_INTERVAL = 50  # Report progress every N tasks
+ FINAL_CLEANUP_TIMEOUT = 300  # Final timeout for remaining tasks
+-MAX_MODEL_FAILURES = 3  # Max failures before isolating a model
++MAX_MODEL_FAILURES = int(os.getenv("AM_MAX_MODEL_FAILURES", "3"))  # Max failures before isolating a model
+ PROVIDER_TASK_BATCH_SIZE = 10  # How many tasks to start per provider at once
+ 
+ from api_client.model_client import ModelClient, ChatMessage, MessageRole, LLMResponse, call_model, get_provider_for_model
