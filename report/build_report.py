@@ -443,7 +443,7 @@ def build(pages=None):
     R.para("Submitted by", WD_ALIGN_PARAGRAPH.CENTER, 12, italic=True, space_after=4)
     for name, roll in STUDENTS:
         R.para(f"{name.upper()}  (Roll No. {roll})", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
-    R.para("", space_after=6)
+    R.para("Branch: CST AIML4", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=6)
     R.para("BACHELOR OF TECHNOLOGY", WD_ALIGN_PARAGRAPH.CENTER, 14, bold=True, space_after=0)
     R.para("IN", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=0)
     R.para("COMPUTER SCIENCE AND TECHNOLOGY", WD_ALIGN_PARAGRAPH.CENTER, 14, bold=True, space_after=14)
