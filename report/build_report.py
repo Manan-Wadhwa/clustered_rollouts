@@ -526,12 +526,6 @@ def build(pages=None):
         f"respected guide {GUIDE[0]} ({GUIDE[1]}) and co-guide {COGUIDE[0]} ({COGUIDE[1]}), MAIT Delhi, for "
         "their valuable guidance, encouragement and help for completing this work. Their useful suggestions "
         "for this whole work and co-operative behavior are sincerely acknowledged.")
-    R.para(
-        "I am also grateful to my teachers Prof. (Dr.) Himanshu Khanna and Ms. Prachi Dahiya (Project "
-        "Coordinators) for their constant support and guidance.")
-    R.para(
-        "I also wish to express my indebtedness to my parents as well as my family member whose blessings "
-        "and support always helped me to face the challenges ahead.")
     R.para("", space_after=24)
     t = d.add_table(rows=1 + len(STUDENTS), cols=2)
     R._widths(t, [2.5, 3.5])
