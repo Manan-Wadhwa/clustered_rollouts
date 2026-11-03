@@ -444,24 +444,23 @@ def build(pages=None):
     for name, roll in STUDENTS:
         R.para(f"{name.upper()}  (Roll No. {roll})", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
     R.para("", space_after=6)
-    R.para("in partial fulfilment of the requirements for the award of the degree of",
-           WD_ALIGN_PARAGRAPH.CENTER, 12, italic=True, space_after=4)
     R.para("BACHELOR OF TECHNOLOGY", WD_ALIGN_PARAGRAPH.CENTER, 14, bold=True, space_after=0)
     R.para("IN", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=0)
     R.para("COMPUTER SCIENCE AND TECHNOLOGY", WD_ALIGN_PARAGRAPH.CENTER, 14, bold=True, space_after=14)
-    R.para("Under the Guidance of", WD_ALIGN_PARAGRAPH.CENTER, 12, italic=True, space_after=2)
-    R.para(f"{GUIDE[0]}  ({GUIDE[1]})", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
-    R.para("Project Guide", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=4)
-    R.para(f"{COGUIDE[0]}  ({COGUIDE[1]})", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
-    R.para("Project Co-Guide", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=10)
+    R.para("Under the Guidance", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=0)
+    R.para("of", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=0)
+    R.para(GUIDE[0], WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
+    R.para(f"({GUIDE[1]})", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=6)
+    R.para(COGUIDE[0], WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
+    R.para(f"({COGUIDE[1]})", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=24)
     logo = os.path.join(FIG, "mait_logo.png")
     if os.path.exists(logo):
         p = d.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p.add_run().add_picture(logo, width=Inches(1.1))
     for line, b in (("Department of Computer Science and Technology", True),
                     ("Maharaja Agrasen Institute of Technology,", True),
-                    ("PSP Area, Sector 22, Rohini, New Delhi 110085", False),
-                    ("(Affiliated to Guru Gobind Singh Indraprastha University, New Delhi)", False)):
+                    ("PSP area, Sector-22, Rohini, New Delhi-110085", True),
+                    ("(Affiliated to Guru Gobind Singh Indraprastha University, New Delhi)", True)):
         R.para(line, WD_ALIGN_PARAGRAPH.CENTER, 12, bold=b, space_after=0, spacing=1.2)
     R.para("", space_after=4)
     R.para("DEC 2026", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
@@ -523,22 +522,16 @@ def build(pages=None):
     R.page_break()
     R.front_heading("Acknowledgement")
     R.para(
-        f"It gives us great pleasure to express our sincere thanks to our guide, {GUIDE[0]}, Professor and Head "
-        "of the Department of Computer Science and Technology, MAIT Delhi, for her guidance, encouragement and "
-        "support throughout this work. Her questions about what our numbers actually claimed shaped the "
-        "direction of the project.")
+        f"It gives me immense pleasure to express my deepest sense of gratitude and sincere thanks to my "
+        f"respected guide {GUIDE[0]} ({GUIDE[1]}) and co-guide {COGUIDE[0]} ({COGUIDE[1]}), MAIT Delhi, for "
+        "their valuable guidance, encouragement and help for completing this work. Their useful suggestions "
+        "for this whole work and co-operative behavior are sincerely acknowledged.")
     R.para(
-        f"We are equally grateful to our co-guide, {COGUIDE[0]}, Department of Computer Science and "
-        "Technology, MAIT Delhi, for her regular feedback on the experiments and on drafts of this report and "
-        "the paper. Her suggestions and patience are sincerely acknowledged.")
+        "I am also grateful to my teachers Prof. (Dr.) Himanshu Khanna and Ms. Prachi Dahiya (Project "
+        "Coordinators) for their constant support and guidance.")
     R.para(
-        "We thank the project coordinators, Prof. (Dr.) Himanshu Khanna and Ms. Prachi Dahiya, and the faculty "
-        "panel members for their comments during the first defence. We also thank the authors of the open "
-        "agentic misalignment suite for releasing their code, which made the measurement part of this project "
-        "possible.")
-    R.para(
-        "Finally, we thank our parents and families, whose support helped us through the long nights of "
-        "debugging GPU runs.")
+        "I also wish to express my indebtedness to my parents as well as my family member whose blessings "
+        "and support always helped me to face the challenges ahead.")
     R.para("", space_after=24)
     t = d.add_table(rows=1 + len(STUDENTS), cols=2)
     R._widths(t, [2.5, 3.5])
