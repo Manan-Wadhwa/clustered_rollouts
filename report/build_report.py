@@ -434,36 +434,35 @@ def build(pages=None):
     d = R.doc
     real, data = real_rows()
 
-    # ---------------- title page
-    for _ in range(2):
-        R.para("", space_after=0)
-    R.para(TITLE, WD_ALIGN_PARAGRAPH.CENTER, 18, bold=True, spacing=1.3, space_after=18)
-    R.para("A", WD_ALIGN_PARAGRAPH.CENTER, 14, space_after=0)
-    R.para("MINOR PROJECT REPORT", WD_ALIGN_PARAGRAPH.CENTER, 14, bold=True, space_after=14)
-    R.para("Submitted by", WD_ALIGN_PARAGRAPH.CENTER, 12, italic=True, space_after=4)
-    for name, roll in STUDENTS:
-        R.para(f"{name.upper()}  (Roll No. {roll})", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
-    R.para("Branch: CST AIML4", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=6)
-    R.para("BACHELOR OF TECHNOLOGY", WD_ALIGN_PARAGRAPH.CENTER, 14, bold=True, space_after=0)
-    R.para("IN", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=0)
-    R.para("COMPUTER SCIENCE AND TECHNOLOGY", WD_ALIGN_PARAGRAPH.CENTER, 14, bold=True, space_after=14)
-    R.para("Under the Guidance", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=0)
-    R.para("of", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=0)
-    R.para(GUIDE[0], WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
-    R.para(f"({GUIDE[1]})", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=6)
-    R.para(COGUIDE[0], WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
-    R.para(f"({COGUIDE[1]})", WD_ALIGN_PARAGRAPH.CENTER, 12, space_after=24)
-    logo = os.path.join(FIG, "mait_logo.png")
-    if os.path.exists(logo):
-        p = d.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.add_run().add_picture(logo, width=Inches(1.1))
-    for line, b in (("Department of Computer Science and Technology", True),
-                    ("Maharaja Agrasen Institute of Technology,", True),
-                    ("PSP area, Sector-22, Rohini, New Delhi-110085", True),
-                    ("(Affiliated to Guru Gobind Singh Indraprastha University, New Delhi)", True)):
-        R.para(line, WD_ALIGN_PARAGRAPH.CENTER, 12, bold=b, space_after=0, spacing=1.2)
-    R.para("", space_after=4)
-    R.para("DEC 2026", WD_ALIGN_PARAGRAPH.CENTER, 13, bold=True, space_after=0)
+    # ---------------- title page (bound-cover format)
+    C = WD_ALIGN_PARAGRAPH.CENTER
+    R.para(TITLE.upper(), C, 16, bold=True, spacing=1.2, space_after=12)
+    R.para("(ES-451: Minor Project Report)", C, 12, bold=True, space_after=10)
+    R.para("Submitted in partial fulfillment of the requirement for the award of the degree of", C, 11, space_after=10, spacing=1.2)
+    R.para("Bachelors of Technology", C, 13, bold=True, space_after=0)
+    R.para("in", C, 12, bold=True, space_after=0)
+    R.para("Computer Science and Technology (AIML-4)", C, 13, bold=True, space_after=12)
+    R.para("Submitted by:", C, 12, bold=True, space_after=4)
+    t = d.add_table(rows=2, cols=3)
+    R._widths(t, [2.0, 2.0, 2.0])
+    for j, (n, r) in enumerate(STUDENTS):
+        R._cell(t.rows[0].cells[j], n, 12, bold=True, align=C)
+        R._cell(t.rows[1].cells[j], r, 12, align=C)
+    R.para("", space_after=4, spacing=1.0)
+    R.para("Under the supervision of:", C, 12, bold=True, space_after=2)
+    t = d.add_table(rows=2, cols=2)
+    R._widths(t, [3.0, 3.0])
+    R._cell(t.rows[0].cells[0], GUIDE[0], 12, bold=True, align=C)
+    R._cell(t.rows[1].cells[0], GUIDE[1], 11, align=C)
+    R._cell(t.rows[0].cells[1], COGUIDE[0], 12, bold=True, align=C)
+    R._cell(t.rows[1].cells[1], COGUIDE[1], 11, align=C)
+    p = d.add_paragraph(); p.alignment = C
+    p.paragraph_format.space_before = Pt(10); p.paragraph_format.space_after = Pt(8)
+    p.add_run().add_picture(os.path.join(FIG, "mait_logo.png"), width=Inches(1.35))
+    R.para("Department of Computer Science and Technology", C, 13, bold=True, space_after=0, spacing=1.3)
+    R.para("Maharaja Agrasen Institute of Technology", C, 12, space_after=0, spacing=1.3)
+    R.para("Sector 22, Rohini, Delhi - 110086", C, 12, space_after=6, spacing=1.3)
+    R.para("December 2026", C, 12, bold=True, space_after=0)
 
     # ---------------- front matter (roman numbers)
     R.new_section("lowerRoman", 1)
