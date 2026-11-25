@@ -38,8 +38,8 @@ TEXT_W = 8.27 - 1.25 - 1.0
 
 TITLE = ("Zero Harmful Actions in N Rollouts Is Not N Trials: Independence-Based "
          "Safety Bounds Are Too Narrow for Clustered Rollouts")
-STUDENTS = [("Manan Wadhwa", "__________"), ("Anagh Miglani", "__________"),
-            ("Hardik Dhull", "__________")]
+STUDENTS = [("Manan Wadhwa", "02814812723"), ("Anagh Miglani", "04014812723"),
+            ("Hardik Dhull", "01214812723")]
 GUIDE = ("Prof. (Dr.) Pooja Gupta", "Professor & HOD, CST")
 COGUIDE = ("Dr. Garima Mittal", "Department of CST")
 
@@ -462,7 +462,7 @@ def build(pages=None):
     R.para("Department of Computer Science and Technology", C, 13, bold=True, space_after=0, spacing=1.3)
     R.para("Maharaja Agrasen Institute of Technology", C, 12, space_after=0, spacing=1.3)
     R.para("Sector 22, Rohini, Delhi - 110086", C, 12, space_after=6, spacing=1.3)
-    R.para("December 2026", C, 12, bold=True, space_after=0)
+    R.para("November 2026", C, 12, bold=True, space_after=0)
 
     # ---------------- front matter (roman numbers)
     R.new_section("lowerRoman", 1)
