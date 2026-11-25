@@ -458,7 +458,7 @@ def build(pages=None):
     R._cell(t.rows[1].cells[1], COGUIDE[1], 11, align=C)
     p = d.add_paragraph(); p.alignment = C
     p.paragraph_format.space_before = Pt(10); p.paragraph_format.space_after = Pt(8)
-    p.add_run().add_picture(os.path.join(FIG, "mait_logo.png"), width=Inches(1.35))
+    p.add_run().add_picture(os.path.join(FIG, "mait_logo.png"), width=Inches(1.9))
     R.para("Department of Computer Science and Technology", C, 13, bold=True, space_after=0, spacing=1.3)
     R.para("Maharaja Agrasen Institute of Technology", C, 12, space_after=0, spacing=1.3)
     R.para("Sector 22, Rohini, Delhi - 110086", C, 12, space_after=6, spacing=1.3)
